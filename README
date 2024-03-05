@@ -1,0 +1,8 @@
+The code reads the input .root file that is set in the config.json file 
+and it creates some plots to explor the tree contained in the file
+
+The python3 environment is locally in python_envs and is activate through activate_env.sh
+
+To execute the code:
+source activate_env.sh
+python3 main.py config.json

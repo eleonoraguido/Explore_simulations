@@ -1,0 +1,4 @@
+{
+    "input_file": "/data/auger8/DNN_photon_analysis_input_files/photon_output.root",
+    "output_file": "./plots/"
+}
