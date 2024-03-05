@@ -3,6 +3,7 @@ import uproot
 import json
 import numpy as np
 import os
+import math
 
 @dataclass
 class TreeData:
@@ -67,6 +68,22 @@ class ProcessedData:
 
 
 
+def rescale_Stot(x_list, Snorm):
+    """
+    Rescale Stot values in a list.
+
+    Parameters:
+    x_list (list): A list of Stot values.
+    Snorm (float): Normalization factor.
+
+    Returns:
+    list: A list of rescaled Stot values.
+    """
+    return [np.log10(xi + 1.0) / math.log10(Snorm + 1) for xi in x_list]
+
+
+
+
 def process_data(tree_data, Snorm=100):
     """
     Process data from a single tree.
@@ -80,12 +97,8 @@ def process_data(tree_data, Snorm=100):
     """
     # Process Nstat
     Nstat = np.log10(tree_data.Nstat)
-    
-    # Rescale Stot
-    def rescale_Stot(x, Snorm):
-        return np.log10(x + 1) / math.log10(Snorm + 1)
-    
-    lg_Stot = rescale_Stot(tree_data.Stot, Snorm)
+
+    lg_Stot = [rescale_Stot(tree_data.Stot, Snorm)]
     
     # Convert theta to degrees
     theta_deg = np.degrees(tree_data.theta)
@@ -150,17 +163,17 @@ def read_tree(file_path):
 
     # Create a TreeData object to hold the data
     tree_data = TreeData(
-        Ene_MC=branches["E_MC"].tolist(),
-        Ene=branches["E_SD"].tolist(),
-        Dist=branches["Dist"].tolist(),
-        traces=branches["traces_vec"].tolist(),
-        ID=branches["ID_SD"].tolist(),
-        t0=branches["t0"].tolist(),
-        theta=branches["theta"].tolist(),
-        Stot=branches["Stot"].tolist(),
-        S1000=branches["Shsize"].tolist(),
-        azimuth=branches["azimuthSP"].tolist(),
-        Nstat=branches["Nstat"].tolist()
+        Ene_MC=np.array(branches["E_MC"].tolist()),
+        Ene=np.array(branches["E_SD"].tolist()),
+        Dist=np.array(branches["Dist"].tolist()),
+        traces=np.array(branches["traces_vec"].tolist()),
+        ID=np.array(branches["ID_SD"].tolist()),
+        t0=np.array(branches["t0"].tolist()),
+        theta=np.array(branches["theta"].tolist()),
+        Stot=np.array(branches["Stot"].tolist()),
+        S1000=np.array(branches["Shsize"].tolist()),
+        azimuth=np.array(branches["azimuthSP"].tolist()),
+        Nstat=np.array(branches["Nstat"].tolist())
     )
 
     return tree_data
@@ -195,11 +208,16 @@ def extract_particle_name(input_file):
     Returns:
     str: The particle name extracted from the input file path.
     """
-    # Extract the directory name containing the input file
-    directory = os.path.dirname(input_file)
+    # Split the input file path by "/"
+    parts = input_file.split("/")
     
-    # Split the directory path by slashes and extract the last part
-    parts = directory.split("/")
-    particle_name = parts[-1]  # Extract the last part
+    # Get the last part of the path
+    last_part = parts[-1]
+    
+    # Split the last part by "_"
+    sub_parts = last_part.split("_")
+    
+    # Get the first part after the split
+    particle_name = sub_parts[0]
     
     return particle_name
