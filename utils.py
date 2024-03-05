@@ -12,7 +12,7 @@ class TreeData:
 
     Attributes:
     Ene_MC (np.ndarray): Energy from Monte Carlo simulation.
-    Ene (np.ndarray): Energy from standard deviation.
+    Ene (np.ndarray): Reconstructed energy.
     Dist (np.ndarray): Distance.
     traces (np.ndarray): Traces vector.
     ID (np.ndarray): ID from standard deviation.
@@ -43,9 +43,9 @@ class ProcessedData:
 
     Attributes:
     lgE_MC (np.ndarray): Processed energy from Monte Carlo simulation.
-    lgE (np.ndarray): Processed energy from standard deviation.
+    lgE (np.ndarray): Processed reconstructed energy.
     Dist (np.ndarray): Normalized distance.
-    traces (np.ndarray): Normalized traces vector.
+    traces (np.ndarray): Cumulative traces vector.
     ID (np.ndarray): ID from standard deviation.
     t0 (np.ndarray): t0 value.
     theta (np.ndarray): Theta value in degrees.
@@ -121,17 +121,17 @@ def process_data(tree_data, Snorm=100):
     Dist_norm = Dist_1500 - mean
     
     # Normalize traces
-    traces = tree_data.traces[:, :, :150]
-    for j, event in enumerate(traces):
+    traces_cum = tree_data.traces[:, :, :150]
+    for j, event in enumerate(traces_cum):
         for i, stat in enumerate(event):
             stat = np.cumsum(stat)
-            traces[j][i] = stat / np.max(stat)
+            traces_cum[j][i] = stat / np.max(stat)
     
     return ProcessedData(
         lgE_MC=lgE_MC,
         lgE=lgE,
         Dist=Dist_norm,
-        traces=traces,
+        traces=traces_cum,
         ID=tree_data.ID,
         t0=tree_data.t0,
         theta=theta_deg,

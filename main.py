@@ -19,6 +19,8 @@ def main():
     plots.plot_S1000_vs_theta(output_file, proc_data.theta, proc_data.lg_S1000, particle_name)
     plots.plot_nstat_distribution(output_file, proc_data.Nstat, particle_name)
     plots.plot_hottest_stations(output_file, proc_data.Dist, particle_name)
+    plots.plot_theta_distribution(proc_data.theta, output_file, particle_name)
+    plots.plot_traces(data.traces, proc_data.traces, output_file, particle_name)
 
 
 if __name__ == "__main__":

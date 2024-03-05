@@ -158,3 +158,80 @@ def plot_hottest_stations(output_dir, Dist_norm, particle_name):
     filename = f"{particle_name}_stations_distance.pdf"  # Adjust the filename as needed
     output_path = os.path.join(output_dir, filename)
     plt.savefig(output_path)
+
+
+def plot_theta_distribution(theta, output_dir, particle_name):
+    """
+    Plot the zenith angle distribution for a single particle.
+
+    Parameters:
+    theta (np.ndarray): Array containing zenith angles.
+    output_dir (str): Directory where the plot will be saved.
+    particle_name (str): Name of the particle being analyzed.
+
+    Returns:
+    None
+    """
+    fig, ax = plt.subplots()
+    ax.hist(np.radians(theta), rwidth=0.95, color="lightblue", ec="blue", zorder=4)
+
+    def deg2rad(x):
+        return x * np.pi / 180
+    
+    def rad2deg(x):
+        return x * 180 / np.pi
+    
+    secax = ax.secondary_xaxis('top', functions=(rad2deg, deg2rad))
+    secax.set_xlabel('$\\theta$ (°)')
+    ax.grid(zorder=0)
+    ax.set_title("Zenith angle distribution")
+    ax.set_ylabel('#')
+    ax.set_xlabel('$\\theta$ (rad)')
+    
+    # Create the output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Save the plot in the output directory with the provided filename
+    filename = f"{particle_name}_theta_distribution.pdf"  # Adjust the filename as needed
+    output_path = os.path.join(output_dir, filename)
+    fig.savefig(output_path, bbox_inches='tight')
+
+
+
+def plot_traces(traces, cum_traces, output_dir, particle_name):
+    """
+    Plot the traces for a single particle.
+
+    Parameters:
+    traces (np.ndarray): Array containing traces for the particle.
+    cum_traces (np.ndarray): Array containing cumulative traces for the particle.
+    output_dir (str): Directory where the plot will be saved.
+    particle_name (str): Name of the particle being analyzed.
+
+    Returns:
+    None
+    """
+    fig, axes = plt.subplots(1, 2, figsize=(12, 6))
+
+    # Plot traces for the first particle
+    selected_indices = np.random.choice(np.arange(traces.shape[0]), size=100, replace=False)
+    for idx in selected_indices:
+        axes[0].plot(traces[idx, 0, :], label=f'Trace {idx}')
+    axes[0].set_title("Traces for " + particle_name+"s")
+    axes[0].set_ylabel('VEM')
+    axes[0].set_xlabel('Time bin')
+
+    # Plot traces for the second particle
+    for idx in selected_indices:
+        axes[1].plot(cum_traces[idx, 0, :], label=f'Trace {idx}')
+    axes[1].set_title("Cumulative traces for " + particle_name +"s")
+    axes[1].set_ylabel('VEM')
+    axes[1].set_xlabel('Time bin')
+    
+    # Create the output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+    
+    # Save the plot in the output directory with the provided filename
+    filename = f"{particle_name}_traces.pdf"  # Adjust the filename as needed
+    output_path = os.path.join(output_dir, filename)
+    fig.savefig(output_path, bbox_inches='tight')
