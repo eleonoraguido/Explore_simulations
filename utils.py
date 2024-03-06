@@ -57,7 +57,7 @@ class ProcessedData:
     lgE_MC: np.ndarray
     lgE: np.ndarray
     Dist: np.ndarray
-    traces: np.ndarray
+    traces_cum: np.ndarray
     ID: np.ndarray
     t0: np.ndarray
     theta: np.ndarray
@@ -120,18 +120,21 @@ def process_data(tree_data, Snorm=100):
     mean = np.mean(Dist_1500)
     Dist_norm = Dist_1500 - mean
     
+    # Create a copy of the traces array to avoid modifying the original data
+    traces = np.copy(tree_data.traces)
+    
     # Normalize traces
-    traces_cum = tree_data.traces[:, :, :150]
+    traces_cum = traces[:, :, :150]
     for j, event in enumerate(traces_cum):
         for i, stat in enumerate(event):
             stat = np.cumsum(stat)
             traces_cum[j][i] = stat / np.max(stat)
-    
-    return ProcessedData(
+
+    ProcessedTree = ProcessedData(
         lgE_MC=lgE_MC,
         lgE=lgE,
         Dist=Dist_norm,
-        traces=traces_cum,
+        traces_cum=traces_cum,
         ID=tree_data.ID,
         t0=tree_data.t0,
         theta=theta_deg,
@@ -140,6 +143,8 @@ def process_data(tree_data, Snorm=100):
         azimuth=azimuth_deg,
         Nstat=Nstat
     )
+
+    return ProcessedTree
 
 
 def read_tree(file_path):
@@ -180,7 +185,7 @@ def read_tree(file_path):
 
 
 
-def read_config(config_file):
+def read_config_plot(config_file):
     """
     Read input and output file paths from a JSON configuration file.
 
@@ -190,11 +195,48 @@ def read_config(config_file):
     Returns:
     tuple: A tuple containing the input and output file paths:
         - input_file (str): The path to the input ROOT file.
-        - output_file (str): The path to the output file.
+        - output_file (str): The path to the output directory.
     """
     with open(config_file, 'r') as f:
         config = json.load(f)
     return config.get('input_file'), config.get('output_file')
+
+
+def read_config_dataset(config_file):
+    """
+    Read input and output file paths from a JSON configuration file.
+
+    Parameters:
+    config_file (str): The path to the JSON configuration file.
+
+    Returns:
+    tuple: A tuple containing the input and output file paths:
+        - input_file1 (str): The path to the first input ROOT file.
+        - input_file2 (str): The path to the second input ROOT file.
+        - output_file (str): The path to the output directory.
+    """
+    with open(config_file, 'r') as f:
+        config = json.load(f)
+    return config.get('input_file1'), config.get('input_file2'), config.get('output_file')
+
+
+
+def read_config_type(config_file):
+    """
+    Read the type of config file from the JSON configuration file.
+
+    Parameters:
+    config_file (str): The path to the JSON configuration file.
+
+    Returns:
+    config_type (str): The type of configuration file.
+    """
+    with open(config_file, 'r') as f:
+        config = json.load(f)
+    return config.get('config_type')
+
+
+
 
 
 

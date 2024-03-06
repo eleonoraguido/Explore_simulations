@@ -1,10 +1,19 @@
-The code reads the input .root file that is set in the config.json file 
-and it creates some plots to explore the tree contained in the file
-
-Plots are saved in the output directory (also set in config.json)
+The code reads the input .root file(s), which are pre-processed Offline SD simulations.
 
 The python3 environment is locally in python_envs and is activate through activate_env.sh
 
 To execute the code:
 source activate_env.sh
-python3 main.py config.json
+python3 main.py <config_file_name>.json
+
+Depending on the type of configuration file that is given as input, different tasks can be performed:
+
+1) Configuration file of type "plot" (e.g. config.json): 
+    -A single .root file is given as input
+    -The script creates some plots to explore the tree contained in the input file.
+    -Plots are saved in the output directory (also set in config.json)
+
+2) Configuration file of type "dataset" (e.g. config_dataset.json)
+    -Two .root files corresponding to two different particle are given as inputs
+    -The two files are read and processed
+    -A .cvs file is created, where the content of the two input files is merged and the events are randomized and labelled (0 for inputfile1, 1 for inputfile2) 

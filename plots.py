@@ -160,6 +160,39 @@ def plot_hottest_stations(output_dir, Dist_norm, particle_name):
     plt.savefig(output_path)
 
 
+def plot_Stot_for3stations(output_dir, Stot, particle_name):
+    """
+    Plots the total signal distribution for three stations of a given particle.
+
+    Parameters:
+    output_dir (str): Directory where the plot will be saved.
+    Stot (np.ndarray): Array containing the total signal values for all stations.
+    particle_name (str): Name of the particle being analyzed.
+
+    Returns:
+    None
+    """
+    n_stat = 3 
+    for num_stat in range(0,n_stat):    #loop over the nth hottest stations
+        fig, ax = plt.subplots()
+        props = dict(boxstyle='round', facecolor='wheat', alpha=0.6)
+        Stot_stat = np.array([Stot_val for Stot_val in Stot])[0,:,num_stat]
+        _, bins, _ = ax.hist(Stot_stat,range=(np.nanmin(Stot_stat), np.nanmax(Stot_stat)), rwidth = 0.95, ec=(210/255,105/255,30/255,1), facecolor=(255/255,228/255,196/255,0.6), zorder=6, label=particle_name)
+        ax.set_title("Total signal for station {0}".format(num_stat+1), fontsize=15)
+        ax.set_ylabel('#', fontsize=13)
+        ax.set_xlabel('$S_{tot}^{norm}$', fontsize=12)
+        ax.grid(zorder=0)
+        ax.text(0.3, 0.65, particle_name+' : $\mu$={0}, $\sigma={1}$'.format(round(Stot_stat.mean(),2), round(Stot_stat.std(),2)), horizontalalignment='left', verticalalignment='center', transform=ax.transAxes, zorder=7, bbox=props, fontsize=12) 
+        
+        # Create the output directory if it doesn't exist
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # Save the plot in the output directory with the provided filename
+        filename = f"{particle_name}"  # Adjust the filename as needed
+        output_path = os.path.join(output_dir, filename)
+        fig.savefig(output_path+'_Stot_stat_{0}.pdf'.format(num_stat), bbox_inches='tight')
+
+
 def plot_theta_distribution(theta, output_dir, particle_name):
     """
     Plot the zenith angle distribution for a single particle.
