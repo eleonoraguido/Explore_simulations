@@ -2,6 +2,6 @@
     "config_type": "dataset",
     "input_file1": "/data/auger8/DNN_photon_analysis_input_files/proton_output.root",
     "input_file2": "/data/auger8/DNN_photon_analysis_input_files/photon_output.root",
-    "output_file": "./dataset/",
-    "dataset_name": "data_phot_prot"
+    "output_file": "/data/auger8/DNN_photon_analysis_input_files/",
+    "dataset_name": "data_phot_prot_merged_shuffle"
 }
