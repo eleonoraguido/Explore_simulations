@@ -8,12 +8,12 @@ python3 main.py <config_file_name>.json
 
 Depending on the type of configuration file that is given as input, different tasks can be performed:
 
-1) Configuration file of type "plot" (e.g. config.json): 
+1) Configuration file of type "plot" (exemple: config.json): 
     -A single .root file is given as input
     -The script creates some plots to explore the tree contained in the input file.
     -Plots are saved in the output directory (also set in config.json)
 
-2) Configuration file of type "dataset" (e.g. config_dataset.json)
-    -Two .root files corresponding to two different particle are given as inputs
+2) Configuration file of type "dataset" (exemple: config_dataset.json)
+    -Two .root files corresponding to two different particle species are given as inputs
     -The two files are read and processed
-    -A .cvs file is created, where the content of the two input files is merged and the events are randomized and labelled (0 for inputfile1, 1 for inputfile2) 
+    -A .npz file is created (name to be set in the configuration file), where the content of the two input files is merged and the events are randomized and labelled (0 for inputfile1, 1 for inputfile2) 

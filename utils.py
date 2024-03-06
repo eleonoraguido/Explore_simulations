@@ -52,7 +52,8 @@ class ProcessedData:
     lg_Stot (np.ndarray): Processed and rescaled Stot value.
     lg_S1000 (np.ndarray): Processed S1000 value.
     azimuth (np.ndarray): AzimuthSP value in degrees.
-    Nstat (np.ndarray): Processed Nstat value.
+    Nstat (np.ndarray): Normalized Nstat value.
+    label (int): label (0 or 1)
     """
     lgE_MC: np.ndarray
     lgE: np.ndarray
@@ -65,6 +66,7 @@ class ProcessedData:
     lg_S1000: np.ndarray
     azimuth: np.ndarray
     Nstat: np.ndarray
+    label: int
 
 
 
@@ -84,12 +86,13 @@ def rescale_Stot(x_list, Snorm):
 
 
 
-def process_data(tree_data, Snorm=100):
+def process_data(tree_data, label_val=1, Snorm=100):
     """
     Process data from a single tree.
 
     Parameters:
     tree_data (TreeData): An instance of TreeData containing data arrays from a single tree.
+    label_val (int, optional): It distinguish between signal (1) and background (0) data
     Snorm (float, optional): Normalization factor for Stot (default is 100).
 
     Returns:
@@ -98,7 +101,8 @@ def process_data(tree_data, Snorm=100):
     # Process Nstat
     Nstat = np.log10(tree_data.Nstat)
 
-    lg_Stot = [rescale_Stot(tree_data.Stot, Snorm)]
+    lg_Stot = np.array([rescale_Stot(tree_data.Stot, Snorm)])
+    lg_Stot = lg_Stot[0]
     
     # Convert theta to degrees
     theta_deg = np.degrees(tree_data.theta)
@@ -141,7 +145,8 @@ def process_data(tree_data, Snorm=100):
         lg_Stot=lg_Stot,
         lg_S1000=lg_S1000,
         azimuth=azimuth_deg,
-        Nstat=Nstat
+        Nstat=Nstat,
+        label=label_val
     )
 
     return ProcessedTree
@@ -214,10 +219,11 @@ def read_config_dataset(config_file):
         - input_file1 (str): The path to the first input ROOT file.
         - input_file2 (str): The path to the second input ROOT file.
         - output_file (str): The path to the output directory.
+	- dataset_name (str): The name of the data set file that will be created
     """
     with open(config_file, 'r') as f:
         config = json.load(f)
-    return config.get('input_file1'), config.get('input_file2'), config.get('output_file')
+    return config.get('input_file1'), config.get('input_file2'), config.get('output_file'), config.get('dataset_name')
 
 
 

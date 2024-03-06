@@ -1,5 +1,5 @@
 import sys
-import utils, plots
+import utils, plots, create_dataset
 
 def main():
     if len(sys.argv) != 2:
@@ -26,10 +26,18 @@ def main():
     elif config_type == "dataset":
         print("Two .root files are given as input.")
         print("The data set with signal and background events will be created")
-        input_file1, input_file2, output_dir = utils.read_config_dataset(config_file)
-        print(input_file1)
-        print(input_file2)
-        print(output_dir)
+        input_file1, input_file2, output_dir, dataset_name = utils.read_config_dataset(config_file)
+        data1 = utils.read_tree(input_file1) #read the tree content
+        data2 = utils.read_tree(input_file2) #read the tree content
+        proc_data1 = utils.process_data(data1, 1)   # modify the tree content
+        proc_data2 = utils.process_data(data2, 0)   # modify the tree content
+        preprocessed_data = []
+        preprocessed_data.append(proc_data1)
+        preprocessed_data.append(proc_data2)
+
+        create_dataset.merge_and_shuffle(output_dir,dataset_name,preprocessed_data)
+        create_dataset.load_npz_file(output_dir, dataset_name)   #to check if it worked
+        
     else:
         print("Unsupported config file type.")
         sys.exit(1)
