@@ -11,9 +11,11 @@ def main():
 
     if config_type == "plot":
         print("A single .root file is given as input. Plots will be created to explore it.")
-        input_file, output_file = utils.read_config_plot(config_file)
+        input_file, output_file, theta_cut = utils.read_config_plot(config_file)
+        print("\tInput file is "+input_file)
+        print("\tOutput directory is "+output_file)
         data = utils.read_tree(input_file) #read the tree content
-        proc_data = utils.process_data(data)   # modify the tree content
+        proc_data = utils.process_data(data, theta_cut)   # modify the tree content
         particle_name = utils.extract_particle_name(input_file)
         #Plots
         plots.plot_energy_distributions(output_file, proc_data.lgE_MC, proc_data.lgE, particle_name)
@@ -26,17 +28,32 @@ def main():
     elif config_type == "dataset":
         print("Two .root files are given as input.")
         print("The data set with signal and background events will be created")
-        input_file1, input_file2, output_dir, dataset_name = utils.read_config_dataset(config_file)
+        input_file1, input_file2, output_dir, dataset_name, theta_cut = utils.read_config_dataset(config_file)
+        print("File 1 is ",input_file1)
+        print("File 2 is ",input_file2)
         data1 = utils.read_tree(input_file1) #read the tree content
         data2 = utils.read_tree(input_file2) #read the tree content
-        proc_data1 = utils.process_data(data1, 1)   # modify the tree content
-        proc_data2 = utils.process_data(data2, 0)   # modify the tree content
+        proc_data1 = utils.process_data(data1, theta_cut, 1)   # modify the tree content
+        proc_data2 = utils.process_data(data2, theta_cut, 0)   # modify the tree content
         preprocessed_data = []
         preprocessed_data.append(proc_data1)
         preprocessed_data.append(proc_data2)
 
         create_dataset.merge_and_shuffle(output_dir,dataset_name,preprocessed_data)
         create_dataset.load_npz_file(output_dir, dataset_name)   #to check if it worked
+
+    elif config_type == "onepart_dataset":
+        print("One .root file is given as input.")
+        input_file, output_dir, dataset_name, theta_cut, label = utils.read_config_onepart_dataset(config_file)
+        print("The data set will be created and the events will be labelled as "+ str(label)+".")
+        data = utils.read_tree(input_file) #read the tree content
+        proc_data = utils.process_data(data, theta_cut, label)   # modify the tree content
+        preprocessed_data = []
+        preprocessed_data.append(proc_data)
+
+        create_dataset.merge_and_shuffle(output_dir,dataset_name,preprocessed_data)
+        create_dataset.load_npz_file(output_dir, dataset_name)   #to check if it worked
+
         
     else:
         print("Unsupported config file type.")

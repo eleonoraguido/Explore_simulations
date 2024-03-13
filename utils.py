@@ -86,23 +86,46 @@ def rescale_Stot(x_list, Snorm):
 
 
 
-def process_data(tree_data, label_val=1, Snorm=100):
+def process_data(tree_data_input, sel_theta = False, label_val=1, Snorm=100):
     """
     Process data from a single tree.
 
     Parameters:
     tree_data (TreeData): An instance of TreeData containing data arrays from a single tree.
+    sel_theta (bool, optional): if true a selection of vertical events is performed (theta < 60°)
     label_val (int, optional): It distinguish between signal (1) and background (0) data
     Snorm (float, optional): Normalization factor for Stot (default is 100).
 
     Returns:
     ProcessedData: An instance of ProcessedData containing processed data arrays.
     """
+
+    if(sel_theta):
+        # Filter data based on theta
+        filtered_indices = np.where(tree_data_input.theta < np.radians(60))[0]
+        tree_data = TreeData(
+            Ene_MC=tree_data_input.Ene_MC[filtered_indices],
+            Ene=tree_data_input.Ene[filtered_indices],
+            Dist=tree_data_input.Dist[filtered_indices],
+            traces=tree_data_input.traces[filtered_indices],
+            ID=tree_data_input.ID[filtered_indices],
+            t0=tree_data_input.t0[filtered_indices],
+            theta=tree_data_input.theta[filtered_indices],
+            Stot=tree_data_input.Stot[filtered_indices],
+            S1000=tree_data_input.S1000[filtered_indices],
+            azimuth=tree_data_input.azimuth[filtered_indices],
+            Nstat=tree_data_input.Nstat[filtered_indices]
+        )
+    else:
+        tree_data = tree_data_input
+
+    
     # Process Nstat
     Nstat = np.log10(tree_data.Nstat)
 
     lg_Stot = np.array([rescale_Stot(tree_data.Stot, Snorm)])
-    lg_Stot = lg_Stot[0]
+    lg_Stot = np.squeeze(lg_Stot)
+  
     
     # Convert theta to degrees
     theta_deg = np.degrees(tree_data.theta)
@@ -123,6 +146,7 @@ def process_data(tree_data, label_val=1, Snorm=100):
     Dist_1500 = tree_data.Dist / 1500
     mean = np.mean(Dist_1500)
     Dist_norm = Dist_1500 - mean
+ 
     
     # Create a copy of the traces array to avoid modifying the original data
     traces = np.copy(tree_data.traces)
@@ -133,6 +157,7 @@ def process_data(tree_data, label_val=1, Snorm=100):
         for i, stat in enumerate(event):
             stat = np.cumsum(stat)
             traces_cum[j][i] = stat / np.max(stat)
+
 
     ProcessedTree = ProcessedData(
         lgE_MC=lgE_MC,
@@ -201,10 +226,11 @@ def read_config_plot(config_file):
     tuple: A tuple containing the input and output file paths:
         - input_file (str): The path to the input ROOT file.
         - output_file (str): The path to the output directory.
+        - theta_cut (bool): if true only events with theta < 60° are selected.
     """
     with open(config_file, 'r') as f:
         config = json.load(f)
-    return config.get('input_file'), config.get('output_file')
+    return config.get('input_file'), config.get('output_file'), config.get('theta_cut')
 
 
 def read_config_dataset(config_file):
@@ -219,11 +245,34 @@ def read_config_dataset(config_file):
         - input_file1 (str): The path to the first input ROOT file.
         - input_file2 (str): The path to the second input ROOT file.
         - output_file (str): The path to the output directory.
-	- dataset_name (str): The name of the data set file that will be created
+	    - dataset_name (str): The name of the data set file that will be created.
+        - theta_cut (bool): if true only events with theta < 60° are selected.
     """
     with open(config_file, 'r') as f:
         config = json.load(f)
-    return config.get('input_file1'), config.get('input_file2'), config.get('output_file'), config.get('dataset_name')
+    return config.get('input_file1'), config.get('input_file2'), config.get('output_file'), config.get('dataset_name'), config.get('theta_cut')
+
+
+def read_config_onepart_dataset(config_file):
+    """
+    Read input and output file path from a JSON configuration file.
+
+    Parameters:
+    config_file (str): The path to the JSON configuration file.
+
+    Returns:
+    tuple: A tuple containing the input and output file paths:
+        - input_file (str): The path to the input ROOT file.
+        - output_file (str): The path to the output directory.
+	    - dataset_name (str): The name of the data set file that will be created.
+        - theta_cut (bool): If true only events with theta < 60° are selected.
+        - label (int): Label assigned to the events in the file (0 background, 1 signal).
+    """
+    with open(config_file, 'r') as f:
+        config = json.load(f)
+    return config.get('input_file'), config.get('output_file'), config.get('dataset_name'), config.get('theta_cut'), config.get('label')
+
+    
 
 
 

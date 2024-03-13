@@ -58,6 +58,7 @@ def merge_and_shuffle(output_dir: str, dataset_name: str, processed_data_list: L
     -----------
     None
     """
+    
     # Create info_event for each ProcessedData object
     info_events = np.concatenate([create_info_event(data) for data in processed_data_list])
 
@@ -79,10 +80,24 @@ def merge_and_shuffle(output_dir: str, dataset_name: str, processed_data_list: L
     arrays = shuffle_arrays([traces, labels, Dist_norm, info_events, azimuth, lg_Stot], set_seed=set_seed)
     np.savez_compressed(output_dir+dataset_name+'.npz', traces=traces, dist=Dist_norm, Stot=lg_Stot, azimuthSP=azimuth, info_event=info_events, labels=labels)
     print("File has been created as "+dataset_name+'.npz in '+output_dir)
-    
 
 
-def load_npz_file(output_dir, dataset_name):
+
+def load_npz_file(output_dir: str, dataset_name: str)-> None:
+    """
+    Load the compressed NumPy file and check its content.
+
+    Parameters:
+    -----------
+    output_dir : str
+        Directory path where the dataset file is located.
+    dataset_name : str
+        Name of the dataset file.
+
+    Returns:
+    -----------
+    None
+    """
     # Load the compressed NumPy file
     data = np.load(output_dir + dataset_name+'.npz')
 

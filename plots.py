@@ -176,7 +176,7 @@ def plot_Stot_for3stations(output_dir, Stot, particle_name):
     for num_stat in range(0,n_stat):    #loop over the nth hottest stations
         fig, ax = plt.subplots()
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.6)
-        Stot_stat = np.array([Stot_val for Stot_val in Stot])[0,:,num_stat]
+        Stot_stat = np.array([Stot_val for Stot_val in Stot])[:,num_stat]
         _, bins, _ = ax.hist(Stot_stat,range=(np.nanmin(Stot_stat), np.nanmax(Stot_stat)), rwidth = 0.95, ec=(210/255,105/255,30/255,1), facecolor=(255/255,228/255,196/255,0.6), zorder=6, label=particle_name)
         ax.set_title("Total signal for station {0}".format(num_stat+1), fontsize=15)
         ax.set_ylabel('#', fontsize=13)
@@ -206,7 +206,7 @@ def plot_theta_distribution(theta, output_dir, particle_name):
     None
     """
     fig, ax = plt.subplots()
-    ax.hist(np.radians(theta), rwidth=0.95, color="lightblue", ec="blue", zorder=4)
+    ax.hist(np.radians(theta),bins=75, range=(0, np.radians(75)), rwidth=0.95, color="lightblue", ec="blue", zorder=4)
 
     def deg2rad(x):
         return x * np.pi / 180
@@ -247,7 +247,7 @@ def plot_traces(traces, cum_traces, output_dir, particle_name):
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))
 
     # Plot traces for the first particle
-    selected_indices = np.random.choice(np.arange(traces.shape[0]), size=100, replace=False)
+    selected_indices = np.random.choice(np.arange(cum_traces.shape[0]), size=100, replace=False)
     for idx in selected_indices:
         axes[0].plot(traces[idx, 0, :], label=f'Trace {idx}')
     axes[0].set_title("Traces for " + particle_name+"s")
