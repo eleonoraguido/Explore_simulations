@@ -59,6 +59,8 @@ def merge_and_shuffle(output_dir: str, dataset_name: str, processed_data_list: L
     None
     """
     
+    #processed_data_list = [data for data in processed_data_list if data.label == 1] #filter only data with label 0
+
     # Create info_event for each ProcessedData object
     info_events = np.concatenate([create_info_event(data) for data in processed_data_list])
 
@@ -78,6 +80,7 @@ def merge_and_shuffle(output_dir: str, dataset_name: str, processed_data_list: L
    
     # Shuffle arrays while preserving correspondence
     arrays = shuffle_arrays([traces, labels, Dist_norm, info_events, azimuth, lg_Stot], set_seed=set_seed)
+    
     np.savez_compressed(output_dir+dataset_name+'.npz', traces=traces, dist=Dist_norm, Stot=lg_Stot, azimuthSP=azimuth, info_event=info_events, labels=labels)
     print("File has been created as "+dataset_name+'.npz in '+output_dir)
 

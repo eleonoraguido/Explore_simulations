@@ -15,8 +15,8 @@ Depending on the type of configuration file that is given as input, different ta
 
 2) Configuration file of type "dataset" (example: config_dataset.json)
     -Two .root files corresponding to two different particle species are given as inputs
-    -The two files are read and processed
-    -A .npz file is created (name to be set in the configuration file), where the content of the two input files is merged and the events are randomized and labelled (0 for inputfile1, 1 for inputfile2) 
+    -The two files are read and processed: file1 is signal 1, file2 is background 0
+    -A .npz file is created (name to be set in the configuration file), where the content of the two input files is merged and the events are randomized and labelled (1 for inputfile1, 0 for inputfile2) 
 
 3) Configuration file of type "dataset_onepart" (example: config_onepart_dataset.json)
     -One .root file corresponding to a particle species is given as input

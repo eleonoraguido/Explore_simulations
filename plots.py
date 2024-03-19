@@ -113,13 +113,14 @@ def plot_nstat_distribution(output_dir, Nstat, particle_name):
     None
     """
     fig, ax = plt.subplots()
+    Nstat_val = 10**Nstat
     bin_edges = np.linspace(0, 20, num=21)  # 21 edges for 20 bins
-    _, bins, _ = ax.hist(10**Nstat, bins=bin_edges, rwidth=0.95, color="lightblue", ec="blue", zorder=4, label='All')
+    _, bins, _ = ax.hist(Nstat_val, bins=bin_edges, rwidth=0.95, color="lightblue", ec="blue", zorder=4, label='All')
     ax.set_title("Number of Triggered Stations", fontsize=16)
     ax.grid(zorder=0)
     ax.set_ylabel('Number of Events', fontsize=13)
-    ax.set_xlabel('$\log_{10}(N_{stat})$', fontsize=13)
-
+    ax.set_xlabel('$N_{stat}$', fontsize=13)
+    ax.set_xticks(np.arange(min(bins), max(bins)+1, 1))
     # Create the output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
     

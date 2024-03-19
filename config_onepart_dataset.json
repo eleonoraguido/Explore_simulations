@@ -2,7 +2,7 @@
     "config_type": "onepart_dataset",
     "input_file": "/data/auger8/DNN_photon_analysis_input_files/oxygen_output.root",
     "output_file": "/data/auger8/DNN_photon_analysis_input_files/dataset/",
-    "dataset_name": "data_oxygen_maxtheta60",
+    "dataset_name": "data_oxy_shuffle_maxtheta60_lgE_185_195",
     "theta_cut": true,
     "label": 0
 }

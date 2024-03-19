@@ -4,6 +4,7 @@ import json
 import numpy as np
 import os
 import math
+#import plots
 
 @dataclass
 class TreeData:
@@ -102,7 +103,7 @@ def process_data(tree_data_input, sel_theta = False, label_val=1, Snorm=100):
 
     if(sel_theta):
         # Filter data based on theta
-        filtered_indices = np.where(tree_data_input.theta < np.radians(60))[0]
+        filtered_indices = np.where(tree_data_input.theta <= np.radians(60))[0]
         tree_data = TreeData(
             Ene_MC=tree_data_input.Ene_MC[filtered_indices],
             Ene=tree_data_input.Ene[filtered_indices],
@@ -119,9 +120,9 @@ def process_data(tree_data_input, sel_theta = False, label_val=1, Snorm=100):
     else:
         tree_data = tree_data_input
 
-    
     # Process Nstat
-    Nstat = np.log10(tree_data.Nstat)
+    Nstat_val = np.array(tree_data.Nstat, dtype=np.float128) #conversion to avoid rounding problems
+    Nstat = np.log10(Nstat_val)
 
     lg_Stot = np.array([rescale_Stot(tree_data.Stot, Snorm)])
     lg_Stot = np.squeeze(lg_Stot)

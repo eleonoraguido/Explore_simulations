@@ -45,6 +45,7 @@ def main():
     elif config_type == "onepart_dataset":
         print("One .root file is given as input.")
         input_file, output_dir, dataset_name, theta_cut, label = utils.read_config_onepart_dataset(config_file)
+        print("File is ",input_file)
         print("The data set will be created and the events will be labelled as "+ str(label)+".")
         data = utils.read_tree(input_file) #read the tree content
         proc_data = utils.process_data(data, theta_cut, label)   # modify the tree content
