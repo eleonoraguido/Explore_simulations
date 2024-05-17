@@ -1,5 +1,7 @@
 The code reads the input .root file(s), which are pre-processed Offline SD simulations.
 
+Input files are located in "DNN_photon_analysis_input_files/output_reduced_simulations"
+
 The python3 environment is locally in python_envs and is activate through activate_env.sh
 
 To execute the code:

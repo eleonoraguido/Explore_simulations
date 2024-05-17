@@ -1,3 +1,10 @@
+"""
+Author: Eleonora Guido
+Last modification date: 05.2024
+Photon search with a CNN
+"""
+
+
 import numpy as np
 from typing import List
 from utils import ProcessedData

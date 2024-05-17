@@ -1,3 +1,10 @@
+"""
+Author: Eleonora Guido
+Last modification date: 05.2024
+Photon search with a CNN
+"""
+
+
 from dataclasses import dataclass
 import uproot
 import json
